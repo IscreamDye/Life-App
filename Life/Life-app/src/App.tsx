@@ -47,6 +47,12 @@ function App() {
   const [editingChartIndex, setEditingChartIndex] = useState<number | null>(null);
   const [chartValueInput, setChartValueInput] = useState("");
 
+ 
+  const [showCounters, setShowCounters] = useState(false);
+  const [showCharts, setShowCharts] = useState(true);
+  const [showNotes, setShowNotes] = useState(false);
+
+
   const incrementCounter = (index: number) => {
     setCounters((prev) =>
       prev.map((counter, i) =>
@@ -70,6 +76,8 @@ function App() {
       )
     );
   };
+
+  
 
   const handleAddCounter = () => {
     if (!newCounterTitle.trim()) return;
@@ -107,27 +115,149 @@ function App() {
 
   const [editChartEntryValue, setEditChartEntryValue] = useState("");
 
+  
+
   return (
     <div className="main-container">
       <h1>My Life in Stats</h1>
+      <button className="lifebtn" onClick={() => setModalStep("category")}>Add Life Tracker</button>
+        <div className="container">
+                {/* -------------------Counters----------------- */}
+                {showCounters &&(
+                    <div className="counter-section">
+                      {counters.map((counter, index) => (
+                        <div className="simplecounter" key={`counter-${index}`}>
+                          <div className="card">
+                            <div className="ctitle">
+                              <h2>{counter.title}</h2>
+                              <div className="cdelete">
+                                <button className="redsmall" onClick={() => setCounters((prev) => prev.filter((_, i) => i !== index))}>x</button>
+                              </div>
+                            </div>
+                            
+                            <p>{counter.value}</p>
+                            <button className="red" onClick={() => decrementCounter(index)}>-</button>
+                            <button className="reset" onClick={() => resetCounter(index)}>Reset</button>
+                            <button className="green" onClick={() => incrementCounter(index)}>+</button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                )}
+              
+              {/* -------------------Charts ----------------- */}
+              {showCharts &&(
+                  <div className="chart-section">
+                      {charts.map((chart, index) => (
+                        <div className="card" key={`chart-${index}`}>
+                          <h3>{chart.title}</h3>
+                          <Line
+                            data={{
+                              labels: chart.entries.map((e) => e.date),
+                              datasets: [
+                                {
+                                  data: chart.entries.map((e) => e.value),
+                                  fill: false,
+                                  borderColor: "rgb(75, 192, 192)",
+                                  tension: 0.1,
+                                },
+                              ],
+                            }}
+                            options={{
+                              responsive: true,
+                              plugins: {
+                                legend: {
+                                  display: false, // Hides the legend
+                                },
+                                tooltip: {
+                                  displayColors: false, // Hides the colored square
+                                  callbacks: {
+                                    label: (context) => `${context.formattedValue}`, // Just the value
+                                  },
+                                },
+                              },
+                              onClick: (event, elements) => {
+                                if (elements.length > 0) {
+                                  const chartElement = elements[0];
+                                  const dataIndex = chartElement.index;
+                                  setSelectedChartPoint({ chartIndex: index, entryIndex: dataIndex });
+                                }
+                              },
+                            }}
+                          />
 
-      <div className="container">
-        <button className="lifebtn" onClick={() => setModalStep("category")}>Add Life Tracker</button>
+
+                          <div className="notebuttons">
+                            <button className="red" onClick={() => setCharts((prev) => prev.filter((_, i) => i !== index))}>
+                              Delete Chart
+                            </button>
+                            <button className="green" onClick={() => setEditingChartIndex(index)}>
+                              Add Entry
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+              )}
+                  
+          {/* -------------------To do list ----------------- */}
+          {showNotes &&(
+            <div className="notes-section">
+                  {notes.map((note, index) => (
+                    <div className="simplecounter" key={`note-${index}`}>
+                      <div className="notecard">
+                        <div className="notecontainer">
+                          <h3>{note.title}</h3>
+                          <ul>
+                            {note.enteries.map((entry, entryIndex) => (
+                              <li key={`entry-${entryIndex}`}>
+                                <span>{entry}</span>
+                                <button className="red" onClick={() => setNotes((prev) => prev.map((n, noteIdx) => noteIdx === index
+                                  ? { ...n, enteries: n.enteries.filter((_, i) => i !== entryIndex) }
+                                  : n
+                                )
+                                )
+                                }>
+                                  X
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="notebuttons">
+                          <button className="red" onClick={() => setNotes((prev) => prev.filter((_, i) => i !== index))}>
+                            Delete Note
+                          </button>
+                          <button className="green" onClick={() => setEditingNoteIndex(index)}>
+                            Add Entry
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+          )}
+              
       </div>
-
-      {modalStep === "category" && (
-        <div className="modal">
-          <div className="modalcontainer">
-            <h2>Select a Tracker Type</h2>
-            <button onClick={() => setModalStep("counter")}>Simple Counter</button>
-            <button onClick={() => setModalStep("graph")}>Chart Tracker</button>
-            <button onClick={() => setModalStep("textbox")}>Text Box</button>
-            <button onClick={() => setModalStep(null)}>Close</button>
+      {/* ------------Lower panel ---------------------- */}
+      <div className="lowerpanel">
+        <button className="green" onClick={() => {setShowCounters(true); setShowCharts(false); setShowNotes(false);}}>Counters</button>
+        <button className="green" onClick={() => {setShowCounters(false); setShowCharts(true); setShowNotes(false);}}>Charts</button>
+        <button className="green" onClick={() => {setShowCounters(false); setShowCharts(false); setShowNotes(true);}}>To do Lists</button>
+      </div>
+        {/* ------------Select Tracker ---------------------- */}
+        {modalStep === "category" && (
+          <div className="modal">
+            <div className="modalcontainer">
+              <h2>Select a Tracker Type</h2>
+              <button onClick={() => setModalStep("counter")}>Simple Counter</button>
+              <button onClick={() => setModalStep("graph")}>Chart Tracker</button>
+              <button onClick={() => setModalStep("textbox")}>To do List</button>
+              <button onClick={() => setModalStep(null)}>Close</button>
+            </div>
           </div>
-
-        </div>
-      )}
-
+        )}
+        {/* ------------Counter Selected ---------------------- */}
       {modalStep === "counter" && (
         <div className="modal">
           <div className="modalcontainer">
@@ -138,7 +268,7 @@ function App() {
           </div>
         </div>
       )}
-
+      {/* ------------To do list Selected ---------------------- */}
       {modalStep === "textbox" && (
         <div className="modal">
           <div className="modalcontainer">
@@ -149,18 +279,7 @@ function App() {
           </div>
         </div>
       )}
-
-      {modalStep === "graph" && (
-        <div className="modal">
-          <div className="modalcontainer">
-            <h2>Create Chart</h2>
-            <input type="text" placeholder="Chart title" value={newChartTitle} onChange={(e) => setNewChartTitle(e.target.value)} />
-            <button onClick={handleAddChart}>Add</button>
-            <button onClick={() => setModalStep("category")}>Back</button>
-          </div>
-        </div>
-      )}
-
+      {/* ------------Add entry for to do ---------------------- */}
       {editingNoteIndex !== null && (
         <div className="modal">
           <div className="modalcontainer">
@@ -176,11 +295,22 @@ function App() {
           </div>
         </div>
       )}
-
+      {/* ------------Chart Selected ---------------------- */}
+      {modalStep === "graph" && (
+        <div className="modal">
+          <div className="modalcontainer">
+            <h2>Create Chart</h2>
+            <input type="text" placeholder="Chart title" value={newChartTitle} onChange={(e) => setNewChartTitle(e.target.value)} />
+            <button onClick={handleAddChart}>Add</button>
+            <button onClick={() => setModalStep("category")}>Back</button>
+          </div>
+        </div>
+      )}
+    {/* ------------Add entry for chart ---------------------- */}
       {editingChartIndex !== null && (
         <div className="modal">
           <div className="modalcontainer">
-            <h2>Add Chart Entryasdasd: {charts[editingChartIndex].title}</h2>
+            <h2>Add Chart Entry: {charts[editingChartIndex].title}</h2>
             <input type="number" placeholder="Number" value={chartValueInput} onChange={(e) => setChartValueInput(e.target.value)} />
             <button onClick={() => {
               const newEntry = {
@@ -200,65 +330,7 @@ function App() {
           </div>
         </div>
       )}
-
-      {/* Counters */}
-      <div className="counter-section">
-        {counters.map((counter, index) => (
-          <div className="simplecounter" key={`counter-${index}`}>
-            <div className="card">
-              <h2>{counter.title}</h2>
-              <p>{counter.value}</p>
-              <button className="red" onClick={() => decrementCounter(index)}>-</button>
-              <button className="reset" onClick={() => resetCounter(index)}>Reset</button>
-              <button className="green" onClick={() => incrementCounter(index)}>+</button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Charts */}
-      <div className="chart-section">
-        {charts.map((chart, index) => (
-          <div className="card" key={`chart-${index}`}>
-            <h3>{chart.title}</h3>
-            <Line
-              data={{
-                labels: chart.entries.map((e) => e.date),
-                datasets: [
-                  {
-                    label: "Value",
-                    data: chart.entries.map((e) => e.value),
-                    fill: false,
-                    borderColor: "rgb(75, 192, 192)",
-                    tension: 0.1,
-                  },
-                ],
-              }}
-              options={{
-                responsive: true,
-                onClick: (event, elements) => {
-                  if (elements.length > 0) {
-                    const chartElement = elements[0];
-                    const dataIndex = chartElement.index;
-                    setSelectedChartPoint({ chartIndex: index, entryIndex: dataIndex });
-                  }
-                },
-              }}
-            />
-
-            <div className="notebuttons">
-              <button className="red" onClick={() => setCharts((prev) => prev.filter((_, i) => i !== index))}>
-                Delete Chart
-              </button>
-              <button className="green" onClick={() => setEditingChartIndex(index)}>
-                Add Entry
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-
+      {/* ------------Edit chart entry ---------------------- */}
       {selectedChartPoint && (
         <div className="modal">
           <div className="modalcontainer">
@@ -295,43 +367,7 @@ function App() {
           </div>
         </div>
       )}
-
-      {/* Notes */}
-      <div className="notes-section">
-        {notes.map((note, index) => (
-          <div className="simplecounter" key={`note-${index}`}>
-            <div className="notecard">
-              <div className="notecontainer">
-                <h3>{note.title}</h3>
-                <ul>
-                  {note.enteries.map((entry, entryIndex) => (
-                    <li key={`entry-${entryIndex}`}>
-                      <span>{entry}</span>
-                      <button className="red" onClick={() => setNotes((prev) => prev.map((n, noteIdx) => noteIdx === index
-                        ? { ...n, enteries: n.enteries.filter((_, i) => i !== entryIndex) }
-                        : n
-                      )
-                      )
-                      }>
-                        X
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="notebuttons">
-                <button className="red" onClick={() => setNotes((prev) => prev.filter((_, i) => i !== index))}>
-                  Delete Note
-                </button>
-                <button className="green" onClick={() => setEditingNoteIndex(index)}>
-                  Add Entry
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-
-      </div>
+      {/* ------------End of main container ---------------------- */}
     </div>
   );
 }

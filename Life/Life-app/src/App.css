@@ -1,63 +1,79 @@
-/* Global reset and modal lock */
+
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: 'Orbitron', sans-serif;
-  
+  font-family: 'Segoe UI', Roboto, sans-serif;
 }
 
-body.active-modal {
-  overflow-y: hidden;
-  
+body {
+  background: linear-gradient(to right, #2c3e50, #4ca1af);
+  color: #333;
 }
 
-body{
-  background-color: #616161;
-}
-
-/* Main layout */
 .main-container {
   max-width: 500px;
-  border: black solid 1px;
   margin: 0 auto;
   padding: 1rem;
-  border-radius: 5px;
   background-color: #ffffff;
-}
-
-h1, h3 {
+  height: 100vh;
   text-align: center;
+  flex-direction: column;
+  display: flex;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  overflow: hidden;
 }
 
-h1{
-  margin-bottom: 15px;
+h1,h2, h3 {
+  text-align: center;
+  color: #222;
 }
 
 .container {
   text-align: center;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.ctitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.ctitle h2 {
+  margin: 0;
+  flex: 1; /* optional, helps fill space */
+  padding-left: 20%;
+}
+
+.cdelete button {
+  flex-shrink: 0; /* prevent button from shrinking */
+}
+.lowerpanel {
+  margin-top: auto;
+  padding: 1rem;
+  background-color: #009688;; /* optional: for visibility */
+  border-radius: 10px;
+  
 }
 .lifebtn{
   cursor: pointer;
   padding: 10px 15px;
-  border: 1px solid #09ff00;
   border-radius: 6px;
-  background-color: #dadada;
+  background-color: #009688;
   transition: background-color 0.2s;
   font-size: 20px;
   padding: 8px 18px;
   margin-bottom: 15px;
+  color: white;
+  font-weight: bold;
 }
 
 .lifebtn:hover{
-  background-color: #c4c4c4;
+  background-color: #00c5b1;
 }
 
-/* =====================
-   MODAL STYLING
-===================== */
-
-/* Modal wrapper (overlay background) */
 .modal {
   position: fixed;
   top: 0;
@@ -75,7 +91,7 @@ h1{
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background-color: chocolate;
+  background-color: #009688;
   padding: 10px;
   border-radius: 10px;
   
@@ -94,7 +110,7 @@ h1{
   background-color: #e0e0e0;
 }
 
-/* Inner modal box */
+
 .categorycontainer {
   background: #f1f1f1;
   padding: 20px;
@@ -112,7 +128,7 @@ h1{
   margin-bottom: 1rem;
 }
 
-/* Vertical buttons for options */
+
 .categorybtns {
   display: flex;
   flex-direction: column;
@@ -120,9 +136,18 @@ h1{
 }
 
 button {
-  padding: 0.5rem 1rem;
   cursor: pointer;
+  padding: 10px 16px;
+  margin: 0.25rem;
+  border: none;
+  border-radius: 8px;
   font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
 
 /* Counter cards */
@@ -138,10 +163,11 @@ button {
 
 .card p{
   font-size: 50px;
-  
-  padding: 25px;
+  padding: 5px;
 }
-
+.deletebtn{
+  border: red;
+}
 
 
 .red{
@@ -149,10 +175,25 @@ button {
   padding: 10px 15px;
   border: 1px solid #ff0000;
   border-radius: 6px;
-  background-color: #ff0000;
+  background-color: #ffffff;
   transition: background-color 0.2s;
   font-size: 20px;
   padding: 8px 18px;
+}
+
+.redsmall{
+  cursor: pointer;
+  padding: 10px 15px;
+  border: 1px solid #ff0000;
+  border-radius: 6px;
+  background-color: #ffffff;
+  transition: background-color 0.2s;
+  font-size: 20px;
+  padding: 0px 10px;
+  padding-bottom: 3px;
+}
+.redsmall:hover{
+  background-color: #e40000;
 }
 
 .red:hover{
@@ -162,9 +203,9 @@ button {
 .green{
   cursor: pointer;
   padding: 10px 15px;
-  border: 1px solid rgb(0, 209, 0);
+  border: 1px solid  #009688;
   border-radius: 6px;
-  background-color: rgb(0, 209, 0);
+  background-color: white;
   transition: background-color 0.2s;
   font-size: 20px;
   padding: 8px 15px;
@@ -176,9 +217,9 @@ button {
 .reset{
   cursor: pointer;
   padding: 10px 15px;
-  border: 1px solid rgb(216, 216, 216);
+  border: 1px solid rgb(71, 71, 71);
   border-radius: 6px;
-  background-color: rgb(216, 216, 216);
+  background-color: rgb(255, 255, 255);
   transition: background-color 0.2s;
   font-size: 20px;
   padding: 8px 15px;
