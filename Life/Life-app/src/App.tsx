@@ -2,7 +2,7 @@ import "./App.css";
 import { useState } from "react";
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend, LineElement, PointElement, } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { Routes, Route } from "react-router-dom";
+
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, LineElement, PointElement);
 
@@ -176,7 +176,7 @@ function App() {
                                   },
                                 },
                               },
-                              onClick: (event, elements) => {
+                              onClick: (_, elements) => {
                                 if (elements.length > 0) {
                                   const chartElement = elements[0];
                                   const dataIndex = chartElement.index;
