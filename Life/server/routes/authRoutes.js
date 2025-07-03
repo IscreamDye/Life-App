@@ -14,7 +14,7 @@ const router = express.Router();
 router.use(
   cors({
     credentials: true,
-    origin: 'https://lifestatisticsapp.netlify.app/',
+    origin: 'https://lifestatisticsapp.netlify.app',
   })
 );
 
