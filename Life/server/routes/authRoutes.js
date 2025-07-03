@@ -10,13 +10,7 @@ getProfile,
 
 const router = express.Router();
 
-// Allow requests only from this origin
-router.use(
-  cors({
-    credentials: true,
-    origin: 'https://lifestatisticsapp.netlify.app',
-  })
-);
+
 
 // Define routes
 router.get('/', test);
