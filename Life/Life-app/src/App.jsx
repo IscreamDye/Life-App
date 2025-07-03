@@ -1,12 +1,12 @@
 import { Routes, Route } from "react-router-dom";
-import Login from './components/Login'; 
-import Navbar from "./components/Navbar";
-import Register from "./components/Register";
+import Login from './components/Login.jsx'; 
+import Navbar from "./components/Navbar.jsx";
+import Register from "./components/Register.jsx";
 import axios from "axios";
 import { Toaster } from 'react-hot-toast';
-import { UserContextProvider, UserContext } from "./components/userContext";
-import Dashboard from "./components/Dashboard";
-import HomePage from "./HomePage"; // your actual homepage
+import { UserContextProvider, UserContext } from "./components/userContext.jsx";
+import Dashboard from "./components/Dashboard.jsx";
+import HomePage from "./HomePage.js"; // your actual homepage
 import { useContext } from "react";
 
 axios.defaults.baseURL = 'http://localhost:8000';
