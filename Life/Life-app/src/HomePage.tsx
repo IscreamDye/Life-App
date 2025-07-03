@@ -1,5 +1,5 @@
 import "./HomePage.css";
-import { useState, useContext, useEffect  } from "react";
+import { useState, useEffect  } from "react";
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend, LineElement, PointElement, } from "chart.js";
 import { Line } from "react-chartjs-2";
 
