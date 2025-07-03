@@ -34,5 +34,5 @@ app.use('/tracker', noteRoute);
 app.use('/tracker', chartRoute);
 
 // Start server
-const port = 8000;
+const port = process.env.PORT || 4000 
 app.listen(port, () => console.log(`Server running on port ${port}`));
