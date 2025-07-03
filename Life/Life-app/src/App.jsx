@@ -9,7 +9,7 @@ import Dashboard from "./components/Dashboard.jsx";
 import HomePage from "./HomePage.js"; // your actual homepage
 import { useContext } from "react";
 
-axios.defaults.baseURL = 'http://localhost:8000';
+axios.defaults.baseURL = 'https://life-app-o6wa.onrender.com';
 axios.defaults.withCredentials = true;
 
 // Component that uses context to conditionally show Navbar + HomePage
