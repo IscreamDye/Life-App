@@ -66,7 +66,7 @@ function HomePage() {
     if (showCounters) {
       const fetchCounters = async () => {
         try {
-          const res = await fetch("http://localhost:8000/tracker/allCounters", {
+          const res = await fetch("https://life-app-o6wa.onrender.com/tracker/allCounters", {
             method: "GET",
             credentials: "include",  // IMPORTANT: send cookies/session info
           });
@@ -90,7 +90,7 @@ function HomePage() {
     if (!counter._id) return;
 
     try {
-      const res = await fetch(`http://localhost:8000/tracker/updateCounter/${counter._id}`, {
+      const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/updateCounter/${counter._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -138,7 +138,7 @@ function HomePage() {
     if (!counterToDelete._id) return;
 
     try {
-      const res = await fetch(`http://localhost:8000/tracker/deleteCounter/${counterToDelete._id}`, {
+      const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/deleteCounter/${counterToDelete._id}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -157,7 +157,7 @@ function HomePage() {
     if (!newCounterTitle.trim()) return;
 
     try {
-      const response = await fetch("http://localhost:8000/tracker/addCounter", {
+      const response = await fetch("https://life-app-o6wa.onrender.com/tracker/addCounter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: newCounterTitle, value: 0 }),
@@ -181,7 +181,7 @@ function HomePage() {
   if (showNotes) {
     const fetchNotes = async () => {
       try {
-        const res = await fetch("http://localhost:8000/tracker/allNotes", {
+        const res = await fetch("https://life-app-o6wa.onrender.com/tracker/allNotes", {
           method: "GET",
           credentials: "include",
         });
@@ -203,7 +203,7 @@ function HomePage() {
 const handleNotes = async () => {
   if (!newNoteTitle.trim()) return;
   try {
-    const response = await fetch("http://localhost:8000/tracker/addNote", {
+    const response = await fetch("https://life-app-o6wa.onrender.com/tracker/addNote", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title: newNoteTitle }),  // only send title
@@ -226,7 +226,7 @@ useEffect(() => {
   if (showCharts) {
     const fetchCharts = async () => {
       try {
-        const res = await fetch("http://localhost:8000/tracker/allCharts", {
+        const res = await fetch("https://life-app-o6wa.onrender.com/tracker/allCharts", {
           method: "GET",
           credentials: "include",
         });
@@ -246,7 +246,7 @@ const handleAddChart = async () => {
   if (!newChartTitle.trim()) return alert("Chart title cannot be empty");
 
   try {
-    const res = await fetch("http://localhost:8000/tracker/createChart", {
+    const res = await fetch("https://life-app-o6wa.onrender.com/tracker/createChart", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -369,7 +369,7 @@ const handleAddChart = async () => {
                             <button className="red" onClick={async () => {
                                       try {
                                         const chartId = charts[index]._id;
-                                        const res = await fetch(`http://localhost:8000/tracker/deleteChart/${chartId}`, {
+                                        const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/deleteChart/${chartId}`, {
                                           method: "DELETE",
                                           credentials: "include",
                                         });
@@ -408,7 +408,7 @@ const handleAddChart = async () => {
                                   onClick={async () => {
                                     try {
                                       const res = await fetch(
-                                        `http://localhost:8000/tracker/removeEntry/${note._id}/${entryIndex}`,
+                                        `https://life-app-o6wa.onrender.com/tracker/removeEntry/${note._id}/${entryIndex}`,
                                         {
                                           method: "PUT",
                                           credentials: "include",
@@ -444,7 +444,7 @@ const handleAddChart = async () => {
 
                                           try {
                                             const res = await fetch(
-                                              `http://localhost:8000/tracker/deleteNote/${note._id}`,
+                                              `https://life-app-o6wa.onrender.com/tracker/deleteNote/${note._id}`,
                                               {
                                                 method: "DELETE",
                                                 credentials: "include",
@@ -528,7 +528,7 @@ const handleAddChart = async () => {
                     try {
                       const noteId = notes[editingNoteIndex!]._id; // assuming you have _id in your note
 
-                      const res = await fetch(`http://localhost:8000/tracker/addEntry/${noteId}`, {
+                      const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/addEntry/${noteId}`, {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ entry: noteEntryText }),
@@ -583,7 +583,7 @@ const handleAddChart = async () => {
                 };
                 try {
                   const chartId = charts[editingChartIndex!]._id;
-                  const res = await fetch(`http://localhost:8000/tracker/addChartEntry/${chartId}`, {
+                  const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/addChartEntry/${chartId}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ entry: newEntry }),
@@ -622,7 +622,7 @@ const handleAddChart = async () => {
                   try {
                     const chartId = charts[selectedChartPoint.chartIndex]._id;
                     const entryIndex = selectedChartPoint.entryIndex;
-                    const res = await fetch(`http://localhost:8000/tracker/updateEntry/${chartId}/${entryIndex}`, {
+                    const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/updateEntry/${chartId}/${entryIndex}`, {
                       method: "PUT",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({ value: Number(editChartEntryValue) }),
@@ -642,7 +642,7 @@ const handleAddChart = async () => {
                 try {
                   const chartId = charts[selectedChartPoint.chartIndex]._id;
                   const entryIndex = selectedChartPoint.entryIndex;
-                  const res = await fetch(`http://localhost:8000/tracker/deleteEntry/${chartId}/${entryIndex}`, {
+                  const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/deleteEntry/${chartId}/${entryIndex}`, {
                     method: "DELETE",
                     credentials: "include",
                   });

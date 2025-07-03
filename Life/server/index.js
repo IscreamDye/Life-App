@@ -22,7 +22,7 @@ mongoose.connect(process.env.MONGO_URL)
   .catch((err) => console.log('Connection failed:', err));
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(cors({ origin: 'https://lifestatisticsapp.netlify.app/', credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
