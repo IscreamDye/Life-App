@@ -29,7 +29,7 @@ export default function Navbar() {
 
       {user && (
         <div className="right-section">
-          {/*<span className="userName">Hi, {user.username}</span>*/}
+          <span className="userName">Hi, {user.username}</span>
           <button onClick={handleLogout}>Logout</button>
         </div>
       )}

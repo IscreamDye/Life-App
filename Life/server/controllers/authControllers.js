@@ -63,6 +63,8 @@ const loginUser = async (req, res) => {
             httpOnly: true,
             secure: true, // required for HTTPS
             sameSite: 'None', // required for cross-origin cookies
+             path: '/',
+            maxAge: 1000 * 60 * 60 * 24 * 7
           }).json(user);
         }
       );
