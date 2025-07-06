@@ -1,12 +1,7 @@
-// @ts-nocheck
-
 import "./HomePage.css";
 import { useState, useEffect  } from "react";
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend, LineElement, PointElement, } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { useContext } from "react";
-import { UserContext } from "./components/userContext"; // adjust path if needed
-
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, LineElement, PointElement);
 
@@ -38,7 +33,6 @@ interface ChartData {
 
 function HomePage() {
   
-  const { user } = useContext(UserContext);
 
   const [modalStep, setModalStep] = useState<ModalStep>(null);
 
@@ -101,7 +95,7 @@ function HomePage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ value: counter.value, userId: user.id }),
+        body: JSON.stringify({ value: counter.value }),
         credentials: "include",
       });
 
@@ -144,9 +138,10 @@ function HomePage() {
     if (!counterToDelete._id) return;
 
     try {
-      const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/deleteCounter/${counterToDelete._id}?userId=${user.id}`, {
+      const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/deleteCounter/${counterToDelete._id}`, {
         method: "DELETE",
-          });
+        credentials: "include",
+      });
 
       if (!res.ok) throw new Error("Failed to delete counter");
 
@@ -165,7 +160,7 @@ function HomePage() {
       const response = await fetch("https://life-app-o6wa.onrender.com/tracker/addCounter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: newCounterTitle, value: 0, userId: user.id }),
+        body: JSON.stringify({ title: newCounterTitle, value: 0 }),
         credentials: "include",
       });
 

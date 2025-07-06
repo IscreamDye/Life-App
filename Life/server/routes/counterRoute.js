@@ -5,26 +5,26 @@ import authMiddleware from "../controllers/authMiddleware.js"; // adjust path
 const router = express.Router();
 
 // POST /tracker/addCounter
-router.post("/addCounter", async (req, res) => {
+router.post("/addCounter", authMiddleware, async (req, res) => {
   try {
-    const { title, value, userId } = req.body;
-    if (!title || !userId) return res.status(400).json({ error: "Title and userId are required" });
+    const { title, value } = req.body;
+    if (!title) return res.status(400).json({ error: "Title is required" });
 
     const newCounter = new Counter({
-      user: userId,
+      user: req.user.id,  // attach user id here
       title,
       value: value || 0,
-      
     });
 
     await newCounter.save();
+
     res.status(201).json(newCounter);
   } catch (err) {
     console.error("AddCounter Error:", err);
     res.status(500).json({ error: "Server Error", details: err.message });
+    
   }
 });
-
 
 // GET /tracker/allCounters (user-specific) --- req - request Contains everything about 
 // the incoming request: body,params, headers, cookies (from authMiddleware).
@@ -39,17 +39,18 @@ router.get("/allCounters", authMiddleware, async (req, res) => {
 });
 
 // PUT /tracker/updateCounter/:id
-router.put("/updateCounter/:id", async (req, res) => {
+router.put("/updateCounter/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const { value, userId } = req.body;
+    const { value } = req.body;
 
-    if (!userId || typeof value !== "number") {
-      return res.status(400).json({ error: "userId and value are required" });
+    if (typeof value !== "number") {
+      return res.status(400).json({ error: "Value must be a number" });
     }
 
+    // Make sure the counter belongs to the user before updating
     const updatedCounter = await Counter.findOneAndUpdate(
-      { _id: id, user: userId },
+      { _id: id, user: req.user.id },
       { value },
       { new: true }
     );
@@ -64,16 +65,13 @@ router.put("/updateCounter/:id", async (req, res) => {
   }
 });
 
-
 // DELETE /tracker/deleteCounter/:id
-router.delete("/deleteCounter/:id", async (req, res) => {
+router.delete("/deleteCounter/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const { userId } = req.query;
 
-    if (!userId) return res.status(400).json({ error: "Missing userId" });
-
-    const deletedCounter = await Counter.findOneAndDelete({ _id: id, user: userId });
+    // Only delete if counter belongs to user
+    const deletedCounter = await Counter.findOneAndDelete({ _id: id, user: req.user.id });
 
     if (!deletedCounter) {
       return res.status(404).json({ error: "Counter not found or not authorized" });
@@ -84,6 +82,5 @@ router.delete("/deleteCounter/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete counter", details: err.message });
   }
 });
-
 
 export default router;
