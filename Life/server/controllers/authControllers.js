@@ -59,7 +59,13 @@ const loginUser = async (req, res) => {
         {},
         (err, token) => {
           if (err) throw err;
-          res.cookie('token', token).json(user);
+          res.cookie('token', token, {
+            httpOnly: true,
+            secure: true, // required for HTTPS
+            sameSite: 'None', // required for cross-origin cookies
+             path: '/',
+            maxAge: 1000 * 60 * 60 * 24 * 7
+          }).json(user);
         }
       );
     } else {
