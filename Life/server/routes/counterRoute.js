@@ -14,6 +14,7 @@ router.post("/addCounter", async (req, res) => {
       user: userId,
       title,
       value: value || 0,
+      
     });
 
     await newCounter.save();
