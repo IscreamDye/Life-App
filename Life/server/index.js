@@ -14,6 +14,7 @@ import chartRoute from './routes/chartRoute.js'
 
 dotenv.config();
 
+const allowedOrigins = [process.env.FRONTEND_URL]; 
 const app = express();
 
 // Connect to MongoDB
@@ -22,7 +23,7 @@ mongoose.connect(process.env.MONGO_URL)
   .catch((err) => console.log('Connection failed:', err));
 
 // Middleware
-app.use(cors({ origin: 'https://lifestatisticsapp.netlify.app', credentials: true }));
+app.use(cors({ origin: 'https://life-app-front.onrender.com', credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
