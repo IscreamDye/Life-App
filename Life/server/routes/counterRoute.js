@@ -83,4 +83,25 @@ router.delete("/deleteCounter/:id", authMiddleware, async (req, res) => {
   }
 });
 
+
+router.get("/debug-token", (req, res) => {
+  console.log("Cookies received:", req.cookies);
+
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({ error: "No token in cookies" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Decoded token:", decoded);
+    res.json({ success: true, user: decoded });
+  } catch (err) {
+    console.error("Token verification failed:", err.message);
+    res.status(401).json({ error: "Invalid token" });
+  }
+});
+
+
 export default router;
