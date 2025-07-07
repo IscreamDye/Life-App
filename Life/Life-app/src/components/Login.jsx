@@ -30,7 +30,9 @@ const Login = () => {
         setUser(data);
 
         // ✅ redirect to homepage or dashboard
+        setTimeout(() => {
         navigate('/');
+      }, 500);
       }{/* --------------------  this runs if something is wrong with server, is server even on? do you have internet? */}
     } catch (error) {
       console.log(error);
