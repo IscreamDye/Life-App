@@ -61,18 +61,7 @@ function HomePage() {
   const [counters, setCounters] = useState<Counter[]>([]);
   const [showCounters, setShowCounters] = useState(true);
 
-  useEffect(() => {
-  fetch("https://life-app-o6wa.onrender.com/debug-token", {
-    credentials: "include",
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log("DEBUG RESPONSE:", data);
-    })
-    .catch((err) => {
-      console.error("DEBUG ERROR:", err);
-    });
-}, []);
+  
 
    useEffect(() => {
     if (showCounters) {
