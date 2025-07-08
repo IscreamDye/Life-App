@@ -2,7 +2,7 @@ import express from "express";
 import Counter from "../models/counterProfile.js";
 import authMiddleware from "../controllers/authMiddleware.js"; // adjust path
 const User = require('../models/user');  // adjust path as needed
-const Counter = require('../models/Counter');  // if not already imported
+
 
 
 const router = express.Router();
