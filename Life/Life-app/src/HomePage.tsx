@@ -2,7 +2,9 @@ import "./HomePage.css";
 import { useState, useEffect  } from "react";
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend, LineElement, PointElement, } from "chart.js";
 import { Line } from "react-chartjs-2";
-
+// @ts-ignore
+import { UserContext } from "./components/userContext";
+//import { useContext } from "react";
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, LineElement, PointElement);
 
 type ModalStep = null | "category" | "counter" | "graph" | "textbox";
@@ -32,6 +34,9 @@ interface ChartData {
 }
 
 function HomePage() {
+  
+  const { user } = UserContext;
+
   
 
   const [modalStep, setModalStep] = useState<ModalStep>(null);
@@ -290,6 +295,10 @@ const handleAddChart = async () => {
       <h1>My Life in Stats</h1>
       <button className="lifebtn" onClick={() => setModalStep("category")}>Add Life Tracker</button>
         <div className="container">
+           <span className="userName">Hi, {user.username}</span>
+           <span className="userName">Hi, {user._id}</span>
+           <span className="userName">Hi, {user.id}</span>
+           <span className="userName">Hi, {user.email}</span>
                 {/* -------------------Counters----------------- */}
 
          {showCounters && (
