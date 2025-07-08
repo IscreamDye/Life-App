@@ -29,14 +29,34 @@ router.post("/addCounter", authMiddleware, async (req, res) => {
 // GET /tracker/allCounters (user-specific) --- req - request Contains everything about 
 // the incoming request: body,params, headers, cookies (from authMiddleware).
 // res - response Used to send data back to the frontend, like res.json(...), or res.status(...).send(...).
-router.get("/allCounters", authMiddleware, async (req, res) => {
+router.get("/allCounters", async (req, res) => {
   try {
-    const counters = await Counter.find({ user: req.user.id });
+    const { userId, email } = req.query;
+
+    if (!userId || !email) {
+      return res.status(400).json({ error: "Missing userId or email" });
+    }
+
+    // Find user by _id
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Compare emails
+    if (user.email !== email) {
+      return res.status(403).json({ error: "Email mismatch" });
+    }
+
+    // Emails match, find counters
+    const counters = await Counter.find({ user: userId });
     res.json(counters);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Failed to fetch counters" });
   }
 });
+
 
 // PUT /tracker/updateCounter/:id
 router.put("/updateCounter/:id", authMiddleware, async (req, res) => {

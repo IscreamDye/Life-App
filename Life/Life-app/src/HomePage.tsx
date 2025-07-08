@@ -2,7 +2,10 @@ import "./HomePage.css";
 import { useState, useEffect  } from "react";
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend, LineElement, PointElement, } from "chart.js";
 import { Line } from "react-chartjs-2";
+
+import { useContext } from 'react';
 // @ts-ignore
+import { UserContext } from './components/userContext';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, LineElement, PointElement);
 
@@ -32,8 +35,12 @@ interface ChartData {
   entries: ChartEntry[];
 }
 
+
+
 function HomePage() {
   
+ const context = useContext<any>(UserContext);
+  const user = context?.user;
  
 
   
@@ -68,27 +75,33 @@ function HomePage() {
   
 
    useEffect(() => {
-    if (showCounters) {
-      const fetchCounters = async () => {
-        try {
-          const res = await fetch("https://life-app-o6wa.onrender.com/tracker/allCounters", {
-            method: "GET",
-            credentials: "include",  // IMPORTANT: send cookies/session info
-          });
+  if (showCounters && user) {
+    const fetchCounters = async () => {
+      try {
+        const queryParams = new URLSearchParams({
+          userId: user._id,
+          email: user.email,
+        }).toString();
 
-          if (!res.ok) throw new Error("Failed to fetch counters");
+        const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/allCounters?${queryParams}`, {
+          method: "GET",
+          credentials: "include",
+        });
 
-          const data = await res.json();
-          console.log(counters);
-          setCounters(data);
-        } catch (err) {
-          console.error(err);
-          alert("Could not load counters");
-        }
-      };
-      fetchCounters();
-    }
-  }, [showCounters]);
+        if (!res.ok) throw new Error("Failed to fetch counters");
+
+        const data = await res.json();
+        console.log(data);
+        setCounters(data);
+      } catch (err) {
+        console.error(err);
+        alert("Could not load counters");
+      }
+    };
+    fetchCounters();
+  }
+}, [showCounters, user]);
+
 
   // Update counter value on backend
   const updateCounterOnServer = async (counter: Counter) => {
