@@ -1,7 +1,7 @@
 import express from "express";
 import Counter from "../models/counterProfile.js";
 import authMiddleware from "../controllers/authMiddleware.js"; // adjust path
-const User = require('../models/user');  // adjust path as needed
+import User from "../models/user.js"
 
 
 
