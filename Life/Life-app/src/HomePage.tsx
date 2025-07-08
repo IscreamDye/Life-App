@@ -310,7 +310,11 @@ const handleAddChart = async () => {
           
            
                 {/* -------------------Counters----------------- */}
-
+<span className="userName">Hi, {user.username}</span>
+          <span className="userName">Hi, {user.email}</span>
+          <span className="userName">Hi, {user.id}</span>
+          <span className="userName">Hi, {user._id}</span>
+          
          {showCounters && (
           <div className="counter-section">
             {counters.map((counter, index) => (
