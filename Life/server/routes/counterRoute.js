@@ -1,6 +1,9 @@
 import express from "express";
 import Counter from "../models/counterProfile.js";
 import authMiddleware from "../controllers/authMiddleware.js"; // adjust path
+const User = require('../models/user');  // adjust path as needed
+const Counter = require('../models/Counter');  // if not already imported
+
 
 const router = express.Router();
 
@@ -33,29 +36,27 @@ router.get("/allCounters", async (req, res) => {
   try {
     const { userId, email } = req.query;
 
-    if (!userId || !email) {
-      return res.status(400).json({ error: "Missing userId or email" });
+    if (typeof userId !== "string" || typeof email !== "string") {
+      return res.status(400).json({ error: "Invalid query parameters" });
     }
 
-    // Find user by _id
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Compare emails
     if (user.email !== email) {
       return res.status(403).json({ error: "Email mismatch" });
     }
 
-    // Emails match, find counters
     const counters = await Counter.find({ user: userId });
-    res.json(counters);
+    return res.json(counters);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch counters" });
+    console.error("Error in /allCounters:", err);
+    return res.status(500).json({ error: "Failed to fetch counters" });
   }
 });
+
 
 
 // PUT /tracker/updateCounter/:id

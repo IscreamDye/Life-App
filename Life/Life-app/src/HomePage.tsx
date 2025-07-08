@@ -307,6 +307,10 @@ const handleAddChart = async () => {
       <h1>My Life in Stats</h1>
       <button className="lifebtn" onClick={() => setModalStep("category")}>Add Life Tracker</button>
         <div className="container">
+          <span className="userName">Hi, {user.username}</span>
+          <span className="userName">Hi, {user.email}</span>
+          <span className="userName">Hi, {user.id}</span>
+          <span className="userName">Hi, {user._id}</span>
            
                 {/* -------------------Counters----------------- */}
 
