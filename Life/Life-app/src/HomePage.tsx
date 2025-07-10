@@ -128,24 +128,33 @@ useEffect(() => {
 
   // Update counter value on backend
   const updateCounterOnServer = async (counter: Counter) => {
-    if (!counter._id) return;
+  if (!counter._id || !user) return;
 
-    try {
-      const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/updateCounter/${counter._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ value: counter.value }),
-        credentials: "include",
-      });
+  try {
+    const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/updateCounter/${counter._id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        value: counter.value,
+        userId: user._id,
+        email: user.email,
+      }),
+      credentials: "include",
+    });
 
-      if (!res.ok) throw new Error("Failed to update counter");
-    } catch (error) {
-      console.error(error);
-      alert("Failed to update counter");
+    if (!res.ok) {
+      const errorText = await res.text();  // useful for debugging
+      console.error("Failed response:", errorText);
+      throw new Error("Failed to update counter");
     }
-  };
+  } catch (error) {
+    console.error(error);
+    alert("Failed to update counter");
+  }
+};
+
 
   // Increment counter locally and sync with backend
   const incrementCounter = async (index: number) => {
@@ -640,12 +649,19 @@ const handleAddChart = async () => {
                                   onClick={async () => {
                                     try {
                                       const res = await fetch(
-                                        `https://life-app-o6wa.onrender.com/tracker/removeEntry/${note._id}/${entryIndex}`,
-                                        {
-                                          method: "PUT",
-                                          credentials: "include",
-                                        }
-                                      );
+                                          `https://life-app-o6wa.onrender.com/tracker/deleteNote/${note._id}`,
+                                          {
+                                            method: "DELETE",
+                                            headers: {
+                                              "Content-Type": "application/json",
+                                            },
+                                            credentials: "include",
+                                            body: JSON.stringify({
+                                              userId: user._id, // or however you store it
+                                              email: user.email,
+                                            }),
+                                          }
+                                        );
 
                                       if (!res.ok) {
                                         const errorData = await res.json();
@@ -670,32 +686,32 @@ const handleAddChart = async () => {
                         </div>
                         <div className="notebuttons">
                           <button
-                                        className="red"
-                                        onClick={async () => {
-                                          if (!window.confirm("Delete this note?")) return;
+                            className="red"
+                            onClick={async () => {
+                              if (!window.confirm("Delete this note?")) return;
 
-                                          try {
-                                            const res = await fetch(
-                                              `https://life-app-o6wa.onrender.com/tracker/deleteNote/${note._id}`,
-                                              {
-                                                method: "DELETE",
-                                                credentials: "include",
-                                              }
-                                            );
+                              try {
+                                const res = await fetch(
+                                  `https://life-app-o6wa.onrender.com/tracker/deleteNote/${note._id}`,
+                                  {
+                                    method: "DELETE",
+                                    credentials: "include",
+                                  }
+                                );
 
-                                            if (!res.ok) {
-                                              const errorData = await res.json();
-                                              throw new Error(errorData.error || "Failed to delete note");
-                                            }
+                                if (!res.ok) {
+                                  const errorData = await res.json();
+                                  throw new Error(errorData.error || "Failed to delete note");
+                                }
 
-                                            setNotes((prev) => prev.filter((n) => n._id !== note._id));
-                                          } catch (error) {
-                                            alert((error as Error).message);
-                                          }
-                                        }}
-                                      >
-                                        Delete Note
-                                      </button>
+                                setNotes((prev) => prev.filter((n) => n._id !== note._id));
+                              } catch (error) {
+                                alert((error as Error).message);
+                              }
+                            }}
+                          >
+                            Delete Note
+                          </button>
 
                           <button className="green" onClick={() => setEditingNoteIndex(index)}>
                             Add Entry
