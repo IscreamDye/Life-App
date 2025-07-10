@@ -244,22 +244,29 @@ ul {
 li {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   text-decoration: none;
-  padding: 8px 12px;
+  padding: 12px;
   box-sizing: border-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 25px;
+  font-size: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  white-space: pre-wrap; /* allow line breaks */
+  word-wrap: break-word; /* break long words */
+  overflow-wrap: break-word;
+  flex-direction: column; /* so delete button can go below if needed */
 }
 
 li > span {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  width: 100%;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 8px;
 }
+
+
 
 .notebuttons{
   display: flex;
