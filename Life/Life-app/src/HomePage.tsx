@@ -692,13 +692,13 @@ const handleAddChart = async () => {
                               if (!window.confirm("Delete this note?")) return;
 
                               try {
-                                const res = await fetch(
-                                  `https://life-app-o6wa.onrender.com/tracker/deleteNote/${note._id}`,
-                                  {
+                                const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/deleteNote/${note._id}`, {
                                     method: "DELETE",
+                                    headers: { "Content-Type": "application/json" },
                                     credentials: "include",
-                                  }
-                                );
+                                    body: JSON.stringify({ userId: user._id, email: user.email }),
+                                  });
+
 
                                 if (!res.ok) {
                                   const errorData = await res.json();
