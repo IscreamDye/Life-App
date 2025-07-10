@@ -214,7 +214,11 @@ router.put("/removeEntry/:noteId/:entryIndex", async (req, res) => {
 router.delete("/deleteNote/:noteId", async (req, res) => {
   try {
     const { noteId } = req.params;
-    const { userId, email } = req.body;
+    const { userId, email } = req.query;
+
+    if (!userId || !email) {
+      return res.status(400).json({ error: "Missing userId or email" });
+    }
 
     const user = await User.findById(userId);
     if (!user || user.email !== email) {
@@ -230,6 +234,7 @@ router.delete("/deleteNote/:noteId", async (req, res) => {
     res.status(500).json({ error: "Failed to delete note" });
   }
 });
+
 
 
 

@@ -610,10 +610,18 @@ const handleAddChart = async () => {
                             <button className="red" onClick={async () => {
                                       try {
                                         const chartId = charts[index]._id;
-                                        const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/deleteChart/${chartId}`, {
-                                          method: "DELETE",
-                                          credentials: "include",
-                                        });
+                                            const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/deleteChart/${chartId}`, {
+                                              method: "DELETE",
+                                              headers: {
+                                                "Content-Type": "application/json",
+                                              },
+                                              credentials: "include",
+                                              body: JSON.stringify({
+                                                userId: user._id,
+                                                email: user.email,
+                                              }),
+                                            });
+
                                         if (!res.ok) throw new Error("Failed to delete chart");
                                         setCharts(prev => prev.filter((_, i) => i !== index));
                                       } catch {
@@ -649,17 +657,10 @@ const handleAddChart = async () => {
                                   onClick={async () => {
                                     try {
                                       const res = await fetch(
-                                          `https://life-app-o6wa.onrender.com/tracker/deleteNote/${note._id}`,
+                                          `https://life-app-o6wa.onrender.com/tracker/deleteNote/${note._id}?userId=${user._id}&email=${encodeURIComponent(user.email)}`,
                                           {
                                             method: "DELETE",
-                                            headers: {
-                                              "Content-Type": "application/json",
-                                            },
                                             credentials: "include",
-                                            body: JSON.stringify({
-                                              userId: user._id, // or however you store it
-                                              email: user.email,
-                                            }),
                                           }
                                         );
 
@@ -779,9 +780,14 @@ const handleAddChart = async () => {
                       const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/addEntry/${noteId}`, {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ entry: noteEntryText }),
                         credentials: "include",
+                        body: JSON.stringify({
+                          entry: noteEntryText,
+                          userId: user._id,      // <-- add these two!
+                          email: user.email,
+                        }),
                       });
+
 
                       if (!res.ok) {
                         const errorData = await res.json();
@@ -832,11 +838,16 @@ const handleAddChart = async () => {
                 try {
                   const chartId = charts[editingChartIndex!]._id;
                   const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/addChartEntry/${chartId}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ entry: newEntry }),
-                    credentials: "include",
-                  });
+                      method: "PUT",
+                      headers: { "Content-Type": "application/json" },
+                      credentials: "include",
+                      body: JSON.stringify({
+                        entry: newEntry,
+                        userId: user._id,    // add these
+                        email: user.email,
+                      }),
+                    });
+
                   if (!res.ok) {
                      console.log("this is here")
                     const errorData = await res.json();
