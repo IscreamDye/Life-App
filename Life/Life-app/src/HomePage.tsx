@@ -653,33 +653,39 @@ const handleAddChart = async () => {
                               <li key={`entry-${entryIndex}`}>
                                 <span>{entry}</span>
                                 <button
-                                  className="red"
-                                  onClick={async () => {
-                                    try {
-                                      const res = await fetch(
-                                          `https://life-app-o6wa.onrender.com/tracker/deleteNote/${note._id}?userId=${user._id}&email=${encodeURIComponent(user.email)}`,
+                                    className="red"
+                                    onClick={async () => {
+                                      try {
+                                        const res = await fetch(
+                                          `https://life-app-o6wa.onrender.com/tracker/deleteNote/${note._id}`,
                                           {
                                             method: "DELETE",
+                                            headers: {
+                                              "Content-Type": "application/json",
+                                            },
+                                            body: JSON.stringify({
+                                              userId: user._id,
+                                              email: user.email,
+                                            }),
                                             credentials: "include",
                                           }
                                         );
 
-                                      if (!res.ok) {
-                                        const errorData = await res.json();
-                                        throw new Error(errorData.error || "Failed to remove entry");
-                                      }
+                                        if (!res.ok) {
+                                          const errorData = await res.json();
+                                          throw new Error(errorData.error || "Failed to remove entry");
+                                        }
 
-                                      const updatedNote = await res.json();
-                                      setNotes((prev) =>
-                                        prev.map((n) => (n._id === updatedNote._id ? updatedNote : n))
-                                      );
-                                    } catch (error) {
-                                      alert((error as Error).message);
-                                    }
-                                  }}
-                                >
-                                  X
-                                </button>
+                                        const deletedNote = await res.json();
+                                        setNotes((prev) => prev.filter((n) => n._id !== deletedNote._id));
+                                      } catch (error) {
+                                        alert((error as Error).message);
+                                      }
+                                    }}
+                                  >
+                                    X
+                                  </button>
+
                               </li>
                             ))}
                           </ul>
@@ -849,7 +855,7 @@ const handleAddChart = async () => {
                     });
 
                   if (!res.ok) {
-                     console.log("this is here")
+                     
                     const errorData = await res.json();
                     throw new Error(errorData.error || "Failed to add entry");
                    
@@ -869,55 +875,75 @@ const handleAddChart = async () => {
         </div>
       )}
       {/* ------------Edit chart entry ---------------------- */}
-      {selectedChartPoint && (
-        <div className="modal">
-          <div className="modalcontainer">
-            <h3>Edit Chart Entry</h3>
-            <p>
-              Date: {charts[selectedChartPoint.chartIndex].entries[selectedChartPoint.entryIndex].date}
-            </p>
-            <input type="number" value={editChartEntryValue} onChange={(e) => setEditChartEntryValue(e.target.value)} placeholder="New Value" />
-            <button onClick={async () => {
-                  try {
-                    const chartId = charts[selectedChartPoint.chartIndex]._id;
-                    const entryIndex = selectedChartPoint.entryIndex;
-                    const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/updateEntry/${chartId}/${entryIndex}`, {
-                      method: "PUT",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ value: Number(editChartEntryValue) }),
-                      credentials: "include",
-                    });
-                    if (!res.ok) throw new Error("Failed to update entry");
-                    const updatedChart = await res.json();
-                    setCharts(prev => prev.map((chart, idx) => idx === selectedChartPoint.chartIndex ? updatedChart : chart));
-                    setSelectedChartPoint(null);
-                    setEditChartEntryValue("");
-                  } catch (error) {
-                    alert("Error updating entry");
-                  }
-                }}> Save </button>
+    {selectedChartPoint && (
+  <div className="modal">
+    <div className="modalcontainer">
+      <h3>Edit Chart Entry</h3>
+      <p>
+        Date: {charts[selectedChartPoint.chartIndex].entries[selectedChartPoint.entryIndex].date}
+      </p>
+      <input
+        type="number"
+        value={editChartEntryValue}
+        onChange={(e) => setEditChartEntryValue(e.target.value)}
+        placeholder="New Value"
+      />
+      <button onClick={async () => {
+        try {
+          const chartId = charts[selectedChartPoint.chartIndex]._id;
+          const entryIndex = selectedChartPoint.entryIndex;
+          const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/updateEntry/${chartId}/${entryIndex}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              value: Number(editChartEntryValue),
+              userId: user._id,
+              email: user.email,
+            }),
+          });
+          if (!res.ok) throw new Error("Failed to update entry");
+          const updatedChart = await res.json();
+          setCharts(prev => prev.map((chart, idx) =>
+            idx === selectedChartPoint.chartIndex ? updatedChart : chart
+          ));
+          setSelectedChartPoint(null);
+          setEditChartEntryValue("");
+        } catch (error) {
+          alert("Error updating entry");
+        }
+      }}> Save </button>
 
-            <button onClick={async () => {
-                try {
-                  const chartId = charts[selectedChartPoint.chartIndex]._id;
-                  const entryIndex = selectedChartPoint.entryIndex;
-                  const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/deleteEntry/${chartId}/${entryIndex}`, {
-                    method: "DELETE",
-                    credentials: "include",
-                  });
-                  if (!res.ok) throw new Error("Failed to delete entry");
-                  const updatedChart = await res.json();
-                  setCharts(prev => prev.map((chart, idx) => idx === selectedChartPoint.chartIndex ? updatedChart : chart));
-                  setSelectedChartPoint(null);
-                } catch {
-                  alert("Error deleting entry");
-                }
-              }}> Delete </button>
+      <button onClick={async () => {
+        try {
+          const chartId = charts[selectedChartPoint.chartIndex]._id;
+          const entryIndex = selectedChartPoint.entryIndex;
+          const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/deleteEntry/${chartId}/${entryIndex}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              userId: user._id,
+              email: user.email,
+            }),
+          });
 
-            <button onClick={() => setSelectedChartPoint(null)}>Cancel</button>
-          </div>
-        </div>
-      )}
+          if (!res.ok) throw new Error("Failed to delete entry");
+          const updatedChart = await res.json();
+          setCharts(prev => prev.map((chart, idx) =>
+            idx === selectedChartPoint.chartIndex ? updatedChart : chart
+          ));
+          setSelectedChartPoint(null);
+        } catch {
+          alert("Error deleting entry");
+        }
+      }}> Delete </button>
+
+      <button onClick={() => setSelectedChartPoint(null)}>Cancel</button>
+    </div>
+  </div>
+)}
+
       {/* ------------End of main container ---------------------- */}
     </div>
   );
