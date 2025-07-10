@@ -657,16 +657,9 @@ const handleAddChart = async () => {
                                     onClick={async () => {
                                       try {
                                         const res = await fetch(
-                                          `https://life-app-o6wa.onrender.com/tracker/deleteNote/${note._id}`,
+                                          `https://life-app-o6wa.onrender.com/tracker/deleteNoteEntry/${note._id}/${entryIndex}?userId=${user._id}&email=${encodeURIComponent(user.email)}`,
                                           {
                                             method: "DELETE",
-                                            headers: {
-                                              "Content-Type": "application/json",
-                                            },
-                                            body: JSON.stringify({
-                                              userId: user._id,
-                                              email: user.email,
-                                            }),
                                             credentials: "include",
                                           }
                                         );
@@ -676,8 +669,10 @@ const handleAddChart = async () => {
                                           throw new Error(errorData.error || "Failed to remove entry");
                                         }
 
-                                        const deletedNote = await res.json();
-                                        setNotes((prev) => prev.filter((n) => n._id !== deletedNote._id));
+                                        const updatedNote = await res.json();
+                                        setNotes((prev) =>
+                                          prev.map((n) => (n._id === updatedNote._id ? updatedNote : n))
+                                        );
                                       } catch (error) {
                                         alert((error as Error).message);
                                       }
@@ -685,6 +680,7 @@ const handleAddChart = async () => {
                                   >
                                     X
                                   </button>
+
 
                               </li>
                             ))}

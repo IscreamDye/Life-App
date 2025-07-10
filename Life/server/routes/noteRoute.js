@@ -182,11 +182,15 @@ router.put("/addEntry/:noteId", async (req, res) => {
 });
 
 // PUT /tracker/removeEntry/:noteId/:entryIndex
-router.put("/removeEntry/:noteId/:entryIndex", async (req, res) => {
-  try {
-    const { noteId, entryIndex } = req.params;
-    const { userId, email } = req.body;
+router.delete("/deleteNoteEntry/:noteId/:entryIndex", async (req, res) => {
+  const { noteId, entryIndex } = req.params;
+  const { userId, email } = req.query;
 
+  if (!userId || !email) {
+    return res.status(400).json({ error: "Missing user info" });
+  }
+
+  try {
     const user = await User.findById(userId);
     if (!user || user.email !== email) {
       return res.status(403).json({ error: "User validation failed" });
@@ -195,20 +199,19 @@ router.put("/removeEntry/:noteId/:entryIndex", async (req, res) => {
     const note = await Note.findOne({ _id: noteId, user: userId });
     if (!note) return res.status(404).json({ error: "Note not found" });
 
-    const idx = parseInt(entryIndex, 10);
-    if (isNaN(idx) || idx < 0 || idx >= note.entries.length) {
+    if (entryIndex < 0 || entryIndex >= note.entries.length) {
       return res.status(400).json({ error: "Invalid entry index" });
     }
 
-    note.entries.splice(idx, 1);
+    note.entries.splice(entryIndex, 1);
     await note.save();
 
     res.json(note);
   } catch (err) {
-    console.error("RemoveEntry Error:", err);
-    res.status(500).json({ error: "Failed to remove entry" });
+    res.status(500).json({ error: "Failed to delete entry", details: err.message });
   }
 });
+
 
 // DELETE /tracker/deleteNote/:noteId
 router.delete("/deleteNote/:noteId", async (req, res) => {
