@@ -101,7 +101,30 @@ function HomePage() {
     fetchCounters();
   }
 }, [showCounters, user]);
+/*
+useEffect(() => {
+    if (showCounters) {
+      const fetchCounters = async () => {
+        try {
+          const res = await fetch("https://life-app-o6wa.onrender.com/tracker/allCounters", {
+            method: "GET",
+            credentials: "include",  // IMPORTANT: send cookies/session info
+          });
 
+          if (!res.ok) throw new Error("Failed to fetch counters");
+
+          const data = await res.json();
+          console.log(counters);
+          setCounters(data);
+        } catch (err) {
+          console.error(err);
+          alert("Could not load counters");
+        }
+      };
+      fetchCounters();
+    }
+  }, [showCounters]);
+*/
 
   // Update counter value on backend
   const updateCounterOnServer = async (counter: Counter) => {
@@ -149,7 +172,7 @@ function HomePage() {
     setCounters(updatedCounters);
     await updateCounterOnServer(updatedCounters[index]);
   };
-
+/*
   // Delete counter from backend and state
   const deleteCounter = async (index: number) => {
     const counterToDelete = counters[index];
@@ -168,8 +191,35 @@ function HomePage() {
       console.error(error);
       alert("Failed to delete counter");
     }
-  };
+  };*/
+  const deleteCounter = async (index: number) => {
+  const counterToDelete = counters[index];
+  if (!counterToDelete._id) return;
 
+  try {
+    const res = await fetch(
+      `https://life-app-o6wa.onrender.com/tracker/deleteCounter/${counterToDelete._id}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user._id,
+          email: user.email,
+        }),
+      }
+    );
+
+    if (!res.ok) throw new Error("Failed to delete counter");
+
+    setCounters((prev) => prev.filter((_, i) => i !== index));
+  } catch (error) {
+    console.error(error);
+    alert("Failed to delete counter");
+  }
+};
+
+/*
   // Add new counter to backend and state
   const handleAddCounter = async () => {
     if (!newCounterTitle.trim()) return;
@@ -194,7 +244,44 @@ function HomePage() {
       alert("Could not add counter");
     }
   };
+  */
+ const handleAddCounter = async () => {
+  if (!newCounterTitle.trim()) return;
 
+  try {
+    const response = await fetch(
+      "https://life-app-o6wa.onrender.com/tracker/addCounter",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          title: newCounterTitle,
+          value: 0,
+          userId: user._id,
+          email: user.email,
+        }),
+      }
+    );
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Failed to add counter");
+
+    setCounters((prev) => [
+      ...prev,
+      { _id: data._id, title: data.title, value: data.value },
+    ]);
+    setNewCounterTitle("");
+    setModalStep(null);
+  } catch (err) {
+    console.error(err);
+    alert("Could not add counter");
+  }
+};
+
+
+
+/*
   useEffect(() => {
   if (showNotes) {
     const fetchNotes = async () => {
@@ -215,9 +302,39 @@ function HomePage() {
     };
     fetchNotes();
   }
-}, [showNotes]);
+}, [showNotes]); */
+
+useEffect(() => {
+  if (showNotes && user) {
+    const fetchNotes = async () => {
+      try {
+        const queryParams = new URLSearchParams({
+          userId: user._id,
+          email: user.email,
+        }).toString();
+
+        const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/allNotes?${queryParams}`, {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch notes");
+
+        const data = await res.json();
+        console.log("Fetched notes:", data);
+        setNotes(data);
+      } catch (err) {
+        console.error("Error loading notes:", err);
+        alert("Could not load notes");
+      }
+    };
+
+    fetchNotes();
+  }
+}, [showNotes, user]);
 
 
+/*
 const handleNotes = async () => {
   if (!newNoteTitle.trim()) return;
   try {
@@ -238,8 +355,41 @@ const handleNotes = async () => {
     console.error(err);
     alert("Could not add note");
   }
+};*/
+const handleNotes = async () => {
+  if (!newNoteTitle.trim()) return;
+
+  try {
+    const response = await fetch(
+      "https://life-app-o6wa.onrender.com/tracker/addNote",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          title: newNoteTitle,
+          userId: user._id,
+          email: user.email,
+        }),
+      }
+    );
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Failed to add note");
+
+    setNotes((prev) => [
+      ...prev,
+      { _id: data._id, title: data.title, entries: [] },
+    ]);
+    setNewNoteTitle("");
+    setModalStep(null);
+  } catch (err) {
+    console.error(err);
+    alert("Could not add note");
+  }
 };
 
+ /*
 useEffect(() => {
   if (showCharts) {
     const fetchCharts = async () => {
@@ -258,8 +408,38 @@ useEffect(() => {
     };
     fetchCharts();
   }
-}, [showCharts]);
+}, [showCharts]);*/
 
+useEffect(() => {
+  if (showCharts && user) {
+    const fetchCharts = async () => {
+      try {
+        const queryParams = new URLSearchParams({
+          userId: user._id,
+          email: user.email,
+        }).toString();
+
+        const res = await fetch(`https://life-app-o6wa.onrender.com/tracker/allCharts?${queryParams}`, {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch charts");
+
+        const data = await res.json();
+        console.log("Fetched charts:", data);
+        setCharts(data);
+      } catch (err) {
+        console.error("Error loading charts:", err);
+        alert("Could not load charts");
+      }
+    };
+
+    fetchCharts();
+  }
+}, [showCharts, user]);
+
+/*
 const handleAddChart = async () => {
   if (!newChartTitle.trim()) return alert("Chart title cannot be empty");
 
@@ -285,6 +465,41 @@ const handleAddChart = async () => {
     alert((error as Error).message);
   }
 };
+*/
+
+
+const handleAddChart = async () => {
+  if (!newChartTitle.trim()) return alert("Chart title cannot be empty");
+
+  try {
+    const res = await fetch(
+      "https://life-app-o6wa.onrender.com/tracker/createChart",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          title: newChartTitle,
+          userId: user._id,
+          email: user.email,
+        }),
+      }
+    );
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || "Failed to create chart");
+    }
+
+    const createdChart = await res.json();
+    setCharts((prev) => [...prev, createdChart]);
+    setNewChartTitle("");
+    setModalStep(null);
+  } catch (error) {
+    console.error(error);
+    alert((error as Error).message);
+  }
+};
 
 
   const formatDate = () => {
@@ -307,14 +522,7 @@ const handleAddChart = async () => {
       <h1>My Life in Stats</h1>
       <button className="lifebtn" onClick={() => setModalStep("category")}>Add Life Tracker</button>
         <div className="container">
-          
-           
                 {/* -------------------Counters----------------- */}
-<span className="userName">Hi, {user.username}</span>
-          <span className="userName">Hi, {user.email}</span>
-          <span className="userName">Hi, {user.id}</span>
-          <span className="userName">Hi, {user._id}</span>
-          
          {showCounters && (
           <div className="counter-section">
             {counters.map((counter, index) => (
