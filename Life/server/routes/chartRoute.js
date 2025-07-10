@@ -1,6 +1,7 @@
 import express from "express";
 import Chart from "../models/chartProfile.js";
 import authMiddleware from "../controllers/authMiddleware.js";
+import User from "../models/user.js"
 
 const router = express.Router();
 

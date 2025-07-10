@@ -1,6 +1,7 @@
 import express from "express";
 import authMiddleware from "../controllers/authMiddleware.js"; // adjust path
 import Note from "../models/noteProfile.js";
+import User from "../models/user.js"
 
 const router = express.Router();
 /*
